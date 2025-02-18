@@ -1,11 +1,17 @@
 from crewai import Agent, Task
 from langchain_openai import ChatOpenAI
 from tools import WeatherTool, PlacesTool
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 # Use Ollama with CrewAI
 llm = ChatOpenAI(
-    model="ollama/deepseek-r1:14b",
-    base_url="http://localhost:11434/"
+    model=os.getenv("LLM_MODEL"),
+    base_url=os.getenv("HOST")
 )
 
 #-------------------------------#
@@ -45,8 +51,14 @@ places_tool = PlacesTool()
 
 map_agent = Agent(
     role="Local Expert",
-    goal="Fetch map data including points of interest, tourist attractions, and filter them out based on their reviews and opening hours for a specified location.",
-    backstory="Provides accurate and relevant tourist attraction spots, restaurants, points of interest etc. for spontaneous travel planning.",
+    goal="""
+    Fetch map data including points of interest, tourist attractions, and filter them out based on their reviews and opening hours for a specified location.
+    You have to be extremely strict for the categories providied. For example, in the categories if tourist attraction and restaurants are given you provide tourist
+    attractions and restaurants strictly and not appartment, gyms etc.
+            """,
+    backstory="""
+    Provides accurate and relevant tourist attraction spots, restaurants, points of interest etc, based on the categories provided, for spontaneous travel planning.
+    """,
     llm=llm,
     tools=[places_tool],
     allow_delegation=False
