@@ -22,7 +22,7 @@ def predict():
     result = crew.kickoff(
         inputs={"cities": ["New York", "London", "Tokyo"], "location": "33.416151, -111.910912", "radius": 1000,
                 "categories": "tourist_attractions"})
-    return result
+    return result.raw
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5001)
